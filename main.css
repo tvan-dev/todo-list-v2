@@ -1,0 +1,111 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+html {
+    font-size: 62.5%;
+}
+body {
+    font-size: 1.6rem;
+    background-color: rgb(243, 227, 139);
+}
+input,
+button,
+textarea,
+select {
+    color: inherit;
+    font: inherit;
+    font-family: inherit;
+}
+button {
+    background: transparent;
+    border: none;
+}
+main {
+    max-width: 600px;
+    margin: 30px auto 0;
+    padding: 50px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.page-heading {
+    font-size: 24px;
+}
+
+#todo-form {
+    display: flex;
+    gap: 10px;
+    margin-top: 30px;
+}
+.todo-input{
+    flex: 1;
+    padding: 8px 12px;
+    border: 2px solid;
+    border-radius: 8px;
+    font-weight: 600;
+}
+.submit-btn {
+    padding: 8px 12px;
+    border: 2px solid;
+    border-radius: 8px;
+    font-weight: 600;
+    background-color:rgb(120, 240, 124);
+    cursor: pointer;
+}
+
+#task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 30px;
+    list-style: none;
+}
+
+.task-item {
+    display: flex;
+    padding: 8px 12px;
+    border: 2px solid rgb(206, 186, 6);
+    border-radius: 8px;
+}
+
+.task-title {
+    flex: 1
+}
+
+.task-action {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: 600;
+}
+.btn:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.btn-done {
+    color : rgb(0, 192, 6);
+}
+.btn-delete {
+    color: rgb(236, 52, 52);
+}
+
+.task-item.completed {
+    opacity: 0.5;
+}
+.task-item.completed .task-title {
+    text-decoration: line-through;
+}
+
+/* toast message */
+#toast-message {
+    
+}
