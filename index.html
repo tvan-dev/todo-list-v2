@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>todo list pro</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Poetsen+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-    <link rel="stylesheet" href="./main.css">
+    <link rel="stylesheet" href="./style.css">
 </head>
 <body>
     <main>
@@ -17,7 +14,7 @@
         <!-- form -->
         <form id="todo-form" action="">
             <input type="text" class="todo-input" placeholder="What are your tasks for today?" spellcheck="false">
-            <button class="submit-btn">Add</button>
+            <button type="submit" class="submit-btn">Add</button>
         </form>
 
         <!-- task list -->
@@ -35,27 +32,11 @@
     </main>
 
     <!-- toast -->
-    <div id="toast-message" >
-        <!-- empty input-->
-        <div class="toast toast--empty">
-            <p class="toast-content">Please enter your task!</p>
-            <span class="toast__close"><i class="fa-solid fa-xmark"></i></span>
-        </div>
-        <!-- duplicate input -->
-        <div class="toast toast--duplicate">
-            <p class="toast-content">Task already exists!</p>
-            <span class="toast__close"><i class="fa-solid fa-xmark"></i></span>
-        </div>
-        <!-- updated  -->
-        <div class="toast toast--updated">
-            <p class="toast-content">Task updated!</p>
-            <span class="toast__close"><i class="fa-solid fa-xmark"></i></span>
-        </div>
-        <!-- deleted -->
-        <div class="toast toast--deleted">
-            <p class="toast-content">Task updated!</p>
-            <span class="toast__close"><i class="fa-solid fa-xmark"></i></span>
-        </div>
+    <div id="toast-message">
+        
     </div>
+
+    <script src="./main.js"></script>
 </body>
-</html>
+</html>                                                                                                                                                           
+<!-- hàm duplicate / render task -->
