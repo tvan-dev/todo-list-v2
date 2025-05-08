@@ -65,13 +65,13 @@ main {
     list-style: none;
 }
 
+
 .task-item {
     display: flex;
     padding: 8px 12px;
     border: 2px solid rgb(135, 183, 245);
     border-radius: 8px;
 }
-
 .task-title {
     flex: 1
 }
@@ -94,6 +94,7 @@ main {
 .btn-done {
     color : rgb(0, 192, 6);
 }
+
 .btn-delete {
     color: rgb(236, 52, 52);
 }
@@ -103,6 +104,22 @@ main {
 }
 .task-item.completed .task-title {
     text-decoration: line-through;
+}
+
+/* form edit */
+.edit-form {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+
+}
+.input-edit {
+    flex: 1;
+    border: none;
+    outline: none;
+}
+.btn-update {
+    color: rgb(19, 15, 239);
 }
 
 /* toast message */

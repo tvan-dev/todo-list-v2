@@ -24,8 +24,12 @@ function escapeHTML(str) {
 //     })
 // }
 
+submitBtn.onmousedown = function(e) {
+    e.preventDefault()
+}
+
 //3. subit form
-function submitForm(e) {
+function submitForm(e, taskInput) {
     e.preventDefault()
 
     const taskValue =  taskInput.value.trim()
@@ -39,13 +43,15 @@ function submitForm(e) {
             return task.title.toLowerCase() === taskValue.toLowerCase()
         })
         if(index !== -1) {
-            alert('Task already exists!')
+            showToast({message: 'Task already exists.', status: 'duplicate'})
+            taskInput.value = ''
             return
         }
         postTask(taskValue)
         taskInput.value = ''
     })
 }
+form.addEventListener('submit', (e)=> submitForm(e, taskInput))
 
 //4. post and get apt
 
@@ -74,13 +80,22 @@ function getTasks(callback) {
         .then((tasks) => callback(tasks))
 
 }
+function updateTask(taskItem,newTitle) {
+    fetch(`${urlApi}/${taskItem.dataset.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: newTitle }),
+    }) 
+        .then(response => response.json())
+        .then(()=> render())
+}
 
 // 5.render
 function render() {
     getTasks(function(tasks) {
-        const htmls = tasks.map(task => {
+        const htmls = tasks.map((task) => {
             return `
-                    <li class="task-item ${task.completed ? 'completed' : ''}">
+                    <li data-id="${task.id}" class="task-item ${task.completed ? 'completed' : ''}">
                         <p class="task-title">${escapeHTML(task.title)}</p>
                         <div class="task-action">
                             <button class="btn btn-edit">Edit</button>
@@ -92,6 +107,92 @@ function render() {
         taskList.innerHTML = htmls.join('')
     })
 }
+
+//6. edit task
+
+
+taskList.onclick = function(e) {
+
+    const taskItem = e.target.closest(".task-item")
+    const taskTitle = taskItem.querySelector(".task-title")
+    const taskAction = taskItem.querySelector(".task-action")
+    
+    if(e.target.classList.contains("btn-edit")) {
+        const form = document.createElement('form')
+        form.className = 'edit-form'
+        const formEdit = `
+        <input 
+            type="text" 
+            class="input-edit" 
+            value="${taskItem.querySelector(".task-title").innerText}">
+        <button type="submit"class="btn btn-update">UPDATE</button>
+        <button class="btn btn-cancel">CANCEL</button>`
+
+        form.innerHTML = formEdit
+        taskItem.appendChild(form)
+        taskItem.removeChild(taskTitle)
+        taskItem.removeChild(taskAction)
+
+        const inputEdit = form.querySelector(".input-edit")
+        const btnUpdate = form.querySelector(".btn-update")
+        const btnCancel = form.querySelector(".btn-cancel")
+
+        inputEdit.focus()
+        inputEdit.setSelectionRange(inputEdit.value.length, inputEdit.value.length)
+
+        btnCancel.addEventListener('click', () => {
+            form.remove();                          // Xóa form đang edit
+            taskItem.appendChild(taskTitle);        // Thêm lại nội dung gốc
+            taskItem.appendChild(taskAction);       // Thêm lại các nút
+        });
+
+        function submitForm(e, taskInput) {
+            e.preventDefault()
+        
+            const taskValue =  taskInput.value.trim()
+            if(!taskValue) {
+                showToast({message: 'Please enter your task.', status: 'empty'})
+                inputEdit.focus()
+                return
+            }
+            getTasks(function(tasks) {
+                const indexDuplicated = tasks.find((task) => {
+                    return task.title.toLowerCase() === taskValue.toLowerCase() && task.id !== taskItem.dataset.id// taskItem.dataset.id là một chuỗi, chú ý kiểu so sánh
+                })
+
+                if(indexDuplicated) {
+                    showToast({message: 'Task already exists.', status: 'duplicate'})
+                    taskInput.value = taskValue
+                    inputEdit.focus()
+                    inputEdit.setSelectionRange(inputEdit.value.length, inputEdit.value.length)
+                    return
+                }
+                updateTask(taskItem, taskValue)
+                showToast({message: 'Task updated.', status: 'updated'})
+                // render()
+                // taskTitle.innerText = taskValue
+                taskItem.removeChild(form)
+                taskItem.appendChild(taskTitle)
+                taskItem.appendChild(taskAction)
+            })
+        }
+        form.addEventListener('submit', (e)=> submitForm(e, inputEdit))
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //toast message
 function showToast(obj) {
@@ -126,16 +227,13 @@ function showToast(obj) {
     
 }
 
-
-
-// showToast({message: 'Task already exists.', status: 'duplicate'})
 // showToast({message: 'Task updated.', status: 'updated'})
 // showToast({message: 'Task deleted.', status: 'deleted'})
 
 
 
 render()
-form.addEventListener('submit', submitForm)
+
 
 
 
