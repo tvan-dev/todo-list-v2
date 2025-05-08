@@ -85,14 +85,22 @@ function updateTask(taskItem,newTitle) {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: newTitle }),
-    }) 
-        .then(response => response.json())
+    })
         .then(()=> render())
+}
+
+function deleteTask(taskItem) {
+    
 }
 
 // 5.render
 function render() {
+
     getTasks(function(tasks) {
+        if(!tasks.length) {
+            taskList.innerHTML = `<li class="empty-message">No tasks available</li>` 
+            return;
+        }    
         const htmls = tasks.map((task) => {
             return `
                     <li data-id="${task.id}" class="task-item ${task.completed ? 'completed' : ''}">
@@ -107,7 +115,7 @@ function render() {
         taskList.innerHTML = htmls.join('')
     })
 }
-
+render()
 //6. edit task
 
 
@@ -178,20 +186,23 @@ taskList.onclick = function(e) {
         }
         form.addEventListener('submit', (e)=> submitForm(e, inputEdit))
     }
+    if(e.target.classList.contains("btn-done")) {
+        taskItem.classList.toggle("completed")
+    }
+    if(e.target.classList.contains("btn-delete")) {
+
+        // hiện modal xác nhận xóa nếu ok xóa thì fetch xóa
+
+
+        fetch(`${urlApi}/${taskItem.dataset.id}`, {
+            method: "DELETE",
+        }) 
+        .then(() => {
+            render()
+            showToast({message: 'Task deleted.', status: 'deleted'})
+        })
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 //toast message
@@ -227,12 +238,7 @@ function showToast(obj) {
     
 }
 
-// showToast({message: 'Task updated.', status: 'updated'})
-// showToast({message: 'Task deleted.', status: 'deleted'})
 
-
-
-render()
 
 
 
