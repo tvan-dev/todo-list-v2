@@ -8,7 +8,10 @@ const taskInput = $('.todo-input')
 const submitBtn = $(".submit-btn")
 
 const toast = $("#toast-message")
-
+const modal = $("#modal")
+const modalClose = $(".modal-close")
+const modalCancel = $("#modal-cancel")
+const modalDelete = $("#modal-delete")
 // 1. phòng xxs
 
 function escapeHTML(str) {
@@ -17,21 +20,14 @@ function escapeHTML(str) {
     return div.innerHTML;
 
 }
-// 2. check duplicate task
-// function isDuplicate(inputValue) {
-//     getTasks(function(tasks) {
-//         const index = tasks.findIndex(task => task.title.toLowerCase() === inputValue.toLowerCase())
-//     })
-// }
 
 submitBtn.onmousedown = function(e) {
     e.preventDefault()
 }
 
 //3. subit form
-function submitForm(e, taskInput) {
+function submitMainForm(e, taskInput) {
     e.preventDefault()
-
     const taskValue =  taskInput.value.trim()
 
     if(!taskValue) {
@@ -51,9 +47,9 @@ function submitForm(e, taskInput) {
         taskInput.value = ''
     })
 }
-form.addEventListener('submit', (e)=> submitForm(e, taskInput))
+form.addEventListener('submit', (e)=> submitMainForm(e, taskInput))
 
-//4. post and get apt
+//4. api
 
 function postTask(taskValue) {
     fetch(urlApi, {
@@ -78,24 +74,19 @@ function getTasks(callback) {
     fetch(urlApi)
         .then(response => response.json())
         .then((tasks) => callback(tasks))
-
 }
-function updateTask(taskItem,newTitle) {
+
+function updateTask(taskItem,newTitle, ) {
     fetch(`${urlApi}/${taskItem.dataset.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: newTitle }),
+        body: JSON.stringify({ title: newTitle}),
     })
         .then(()=> render())
 }
 
-function deleteTask(taskItem) {
-    
-}
-
 // 5.render
 function render() {
-
     getTasks(function(tasks) {
         if(!tasks.length) {
             taskList.innerHTML = `<li class="empty-message">No tasks available</li>` 
@@ -116,9 +107,8 @@ function render() {
     })
 }
 render()
+
 //6. edit task
-
-
 taskList.onclick = function(e) {
 
     const taskItem = e.target.closest(".task-item")
@@ -154,7 +144,7 @@ taskList.onclick = function(e) {
             taskItem.appendChild(taskAction);       // Thêm lại các nút
         });
 
-        function submitForm(e, taskInput) {
+        function submitEditForm(e, taskInput) {
             e.preventDefault()
         
             const taskValue =  taskInput.value.trim()
@@ -184,23 +174,40 @@ taskList.onclick = function(e) {
                 taskItem.appendChild(taskAction)
             })
         }
-        form.addEventListener('submit', (e)=> submitForm(e, inputEdit))
+        form.addEventListener('submit', (e)=> submitEditForm(e, inputEdit))
     }
     if(e.target.classList.contains("btn-done")) {
         taskItem.classList.toggle("completed")
     }
     if(e.target.classList.contains("btn-delete")) {
-
         // hiện modal xác nhận xóa nếu ok xóa thì fetch xóa
-
-
-        fetch(`${urlApi}/${taskItem.dataset.id}`, {
-            method: "DELETE",
-        }) 
-        .then(() => {
-            render()
-            showToast({message: 'Task deleted.', status: 'deleted'})
+        modal.classList.add("show")
+        function exitModal() {
+            modal.classList.remove("show")
+        }
+        modalClose.addEventListener("click", exitModal)
+        modalCancel.addEventListener("click", exitModal)
+        document.addEventListener("keydown", function(e) {
+            if(e.key === "Escape") {
+                exitModal()
+                document.activeElement.blur() // bỏ focus khỏi nút
+            }
         })
+        modal.addEventListener("click", function(e) {
+            if(e.target === modal) {
+                exitModal()
+            }
+        })
+        modalDelete.onclick =function() {
+            fetch(`${urlApi}/${taskItem.dataset.id}`, {
+                method: "DELETE",
+            }) 
+            .then(() => {
+                render()
+                showToast({message: 'Task deleted.', status: 'deleted'})
+                exitModal()
+            })
+        }
     }
 }
 
@@ -214,7 +221,6 @@ function showToast(obj) {
     const div = document.createElement('div')
     div.className = `toast toast--${status}`
 
-
     //auto remove
     const autoRemoveId = setTimeout(function() {
         toast.removeChild(div)
@@ -227,23 +233,10 @@ function showToast(obj) {
             clearTimeout(autoRemoveId) //hủy auto settimeout ở trên
         }
     }
-
-
     div.innerHTML = `
         <p class="toast-content">${message}</p>
         <span class="toast__close"><i class="fa-solid fa-xmark"></i></span>`
     
         toast.appendChild(div)
     }
-    
 }
-
-
-
-
-
-
-
-
-
-
